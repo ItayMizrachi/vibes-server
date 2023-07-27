@@ -338,6 +338,22 @@ router.put("/savePost/:id", auth, async (req, res) => {
 
 })
 
+router.patch("/profilePic", auth, async (req, res) => {
+  try {
+    if (req.body.profilePic.length > 0) {
+      const data = await UserModel.updateOne({ _id: req.tokenData._id }, { profilePic: req.body.profilePic })
+      res.json(data)
+    }
+    else {
+      res.status(400).json({ err: "You need to send img_url in body" })
+    }
+  }
+  catch (err) {
+    console.log(err);
+    res.status(502).json({ err })
+  }
+})
+
 
 
 module.exports = router;
