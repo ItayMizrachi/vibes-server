@@ -9,23 +9,23 @@ const { auth } = require("../auth/auth");
 router.get("/:post_id", async (req, res) => {
     let perPage = 10;
     let page = req.query.page - 1 || 0;
-
+  
     try {
-        let post_id = req.params.post_id;
-        let data = await CommentModel
-            .find({ post_id: post_id })
-            .limit(perPage)
-            .skip(page * perPage)
-            .populate({ path: "user", select: ["user_name", "profilePic"] })
-            // .populate("user")
-            .exec()
-        res.json(data);
+      let post_id = req.params.post_id;
+      let data = await CommentModel
+        .find({ post_id: post_id })
+        .sort({ date_created: -1 }) // Sort by date_created in desc order (new first)
+        .limit(perPage)
+        .skip(page * perPage)
+        .populate({ path: "user", select: ["user_name", "profilePic"] })
+        .exec();
+      res.json(data);
+    } catch (err) {
+      console.log(err);
+      res.status(502).json({ err });
     }
-    catch (err) {
-        console.log(err);
-        res.status(502).json({ err })
-    }
-})
+  });
+  
 // post a new comment
 //  Domain/comments/(id of the post you commenting)
 router.post("/:id", auth, async (req, res) => {
