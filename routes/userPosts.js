@@ -1,7 +1,7 @@
 const express = require("express");
 const { UserPostModel, validateUserPosts } = require("../models/userPostModel");
 const router = express.Router();
-const { auth } = require("../auth/auth");
+const { auth, authAdmin } = require("../auth/auth");
 const { UserModel } = require("../models/userModel");
 
 
@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 // get all the posts
 // Domain/userPosts/allposts
 
-router.get("/allposts",  async (req, res) => {
+router.get("/allposts", async (req, res) => {
     let perPage = 10;
     let page = req.query.page - 1 || 0;
     let sort = req.query.sort || "date_created";
@@ -57,56 +57,53 @@ router.get("/allposts",  async (req, res) => {
     }
 })
 
-// router.get("/", auth, async (req, res) => {
-//     let perPage = 10;
-//     let page = req.query.page - 1 || 0;
-//     let sort = req.query.sort || "date_created";
-//     let reverse = req.query.reverse === "yes" ? 1 : -1;
-//     try {
-//         const allPosts = await UserPostModel.find({
-//             $or: [{ user_id: req.tokenData._id }, { user_id: req.tokenData.followings }]
-//         })
-//             .limit(perPage)
-//             .skip(page * perPage)
-//             .sort({ [sort]: reverse })
-//             .populate("user") // Make sure "user" matches the reference field name in UserPostModel
-//             .exec(); // Call exec() to execute the query
+router.get("/postsList", authAdmin, async (req, res) => {
+    let perPage = 10;
+    let page = req.query.page - 1 || 0;
+    let sort = req.query.sort || "date_created";
+    let reverse = req.query.reverse === "yes" ? 1 : -1;
+    try {
+        const allPosts = await UserPostModel.find()
+            .limit(perPage)
+            .skip(page * perPage)
+            .sort({ [sort]: reverse })
+            ;
 
-//         res.json(allPosts);
-//     } catch (err) {
-//         console.log(err);
-//         res.status(502).json({ err });
-//     }
-// });
+        res.json(allPosts);
+    } catch (err) {
+        console.log(err);
+        res.status(502).json({ err });
+    }
+});
 
-router.get("/:user_name", async (req, res) => {
+router.get("/userInfo/:user_name", async (req, res) => {
     const perPage = 10;
     const page = req.query.page - 1 || 0;
     const sort = req.query.sort || "date_created";
     const reverse = req.query.reverse === "yes" ? 1 : -1;
-  
+
     try {
-      // Find the user based on the provided user_name
-      const user = await UserModel.findOne({ user_name: req.params.user_name });
-  
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-  
-      // Fetch all posts for the found user
-      const allPosts = await UserPostModel.find({ user: user._id })
-        .limit(perPage)
-        .skip(page * perPage)
-        .sort({ [sort]: reverse })
-        .populate({ path: "user", select: ["user_name", "profilePic"] })
-        .exec();
-  
-      res.json(allPosts);
+        // Find the user based on the provided user_name
+        const user = await UserModel.findOne({ user_name: req.params.user_name });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Fetch all posts for the found user
+        const allPosts = await UserPostModel.find({ user: user._id })
+            .limit(perPage)
+            .skip(page * perPage)
+            .sort({ [sort]: reverse })
+            .populate({ path: "user", select: ["user_name", "profilePic"] })
+            .exec();
+
+        res.json(allPosts);
     } catch (err) {
-      console.log(err);
-      res.status(502).json({ err });
+        console.log(err);
+        res.status(502).json({ err });
     }
-  });
+});
 
 
 // search posts by title or description
@@ -137,6 +134,19 @@ router.get("/single/:id", async (req, res) => {
         res.json(data);
     }
     catch (err) {
+        console.log(err);
+        res.status(502).json({ err })
+    }
+})
+
+router.get("/count", async (req, res) => {
+    try {
+        let perPage = req.query.perPage || 5;
+        const count = await UserPostModel.countDocuments({});
+        res.json({ count, pages: Math.ceil(count / perPage) });
+    }
+    catch (err) {
+        console.log("im an error");
         console.log(err);
         res.status(502).json({ err })
     }

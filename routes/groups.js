@@ -45,6 +45,19 @@ router.get("/groupsListUser", auth, async (req, res) => {
 })
 
 
+router.get("/count", async (req, res) => {
+    try {
+        let perPage = req.query.perPage || 5;
+        const count = await GroupModel.countDocuments({});
+        res.json({ count, pages: Math.ceil(count / perPage) });
+    }
+    catch (err) {
+        console.log("im an error");
+        console.log(err);
+        res.status(502).json({ err })
+    }
+})
+
 router.post("/", auth, async (req, res) => {
     let validBody = validateGroups(req.body);
     if (validBody.error) {

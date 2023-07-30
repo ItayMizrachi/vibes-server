@@ -33,7 +33,8 @@ router.get("/userInfo", auth, async (req, res) => {
 
 // Get user info 
 // Domain/users/userInfo/user_name
-router.get("/:user_name", async (req, res) => {
+
+router.get("/userInfo/:user_name", async (req, res) => {
   try {
     // Find the user based on the provided user_name
     const user = await UserModel.findOne(
@@ -104,6 +105,7 @@ router.get("/count", async (req, res) => {
     res.json({ count, pages: Math.ceil(count / perPage) });
   }
   catch (err) {
+    console.log("im an error");
     console.log(err);
     res.status(502).json({ err })
   }

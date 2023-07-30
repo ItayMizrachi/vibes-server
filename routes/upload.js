@@ -7,9 +7,9 @@ const { config } = require("../config/secret");
 
 
 cloudinary.config({
-    cloud_name: config.cloud_name,
-    api_key: config.cloud_Key,
-    api_secret: config.cloud_secret
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_KEY,
+    api_secret: process.env.CLOUD_SECRET
 });
 
 router.post("/cloud", auth, async (req, res) => {
