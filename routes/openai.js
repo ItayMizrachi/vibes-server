@@ -1,25 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const {Configuration, OpenAIApi} = require("openai")
+const dotenv = require("dotenv");
+dotenv.config();
 
-const config = new Configuration({
-    apiKey: "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",
-})
-const openai = new OpenAIApi(config);
-
-router.get("/", async(req,res) => {
-    res.json({msg:"openai work"});
-  })
-
-  router.post("/", async(req,res) => {
-    const { prompt } = req.body;
-    const completion = await openai.createCompletion({
-        model: "text-davinci-003",
-        max_tokens: 512,
-        temperature: 0,
-        prompt: prompt,
-    })   
-    res.send(completion.data.choices[0].text);
+router.post("/completions", async (req, res) => {
+    const options = {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${process.env.OPENAI_KEY}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: req.body.message }],
+            max_tokens: 100,
+        })
+    }
+    try {
+        const response = await fetch(`https://api.openai.com/v1/chat/completions`, options)
+        const data = await response.json()
+        res.send(data)
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 module.exports = router;

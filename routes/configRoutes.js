@@ -4,6 +4,8 @@ const userPostsR = require("./userPosts");
 const commentsR = require("./comments");
 const groupsR = require("./groups");
 const openaiR = require("./openai");
+const chatbotmessagesR = require("./chatbotmessages");
+const chatbotchatsR = require("./chatbotchats");
 
 exports.routesInit = (app) => {
   app.use("/", indexR);
@@ -12,6 +14,8 @@ exports.routesInit = (app) => {
   app.use("/comments", commentsR);
   app.use("/groups", groupsR);
   app.use("/openai", openaiR);
+  app.use("/chatbotmessages", chatbotmessagesR);
+  app.use("/chatbotchats", chatbotchatsR);
 
   app.use("/*", (req, res) => {
     res.status(404).json({ msg: "page not found 404" })
