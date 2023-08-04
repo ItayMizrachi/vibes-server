@@ -165,7 +165,6 @@ router.post("/", auth, async (req, res) => {
         userPost.user_name = req.tokenData.user_name;
         userPost.user_id = req.tokenData._id;
         let user = await UserModel.findById(req.tokenData._id);
-        userPost.profilePic = user.profilePic;
         userPost.user = user._id;
         await userPost.save();
         res.status(201).json(userPost);
@@ -195,6 +194,23 @@ router.put("/:id", auth, async (req, res) => {
             data = await UserPostModel.updateOne({ _id: id, user_id: req.tokenData._id }, req.body);
         }
         res.json(data);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(502).json({ err })
+    }
+})
+
+router.patch("/changeIMG/:url", auth, async (req, res) => {
+    const url = req.params.url;
+    try {
+        if (url) {
+            const data = await UserPostModel.updateOne({ _id: req.tokenData._id }, { img_url: url })
+            res.json(data)
+        }
+        else {
+            res.status(400).json({ err: "You need to send img_url in body" })
+        }
     }
     catch (err) {
         console.log(err);
