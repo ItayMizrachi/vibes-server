@@ -246,13 +246,13 @@ router.put("/like/:id", auth, async (req, res) => {
         let id = req.params.id;
         const post = await UserPostModel.findById(id);
 
-        if (!post.likes.includes(req.tokenData._id)) {
-            await post.updateOne({ $push: { likes: req.tokenData._id } });
+        if (!post.likes.includes(req.tokenData.user_name)) {
+            await post.updateOne({ $push: { likes: req.tokenData.user_name } });
             res.json("post has been liked ")
 
         } else {
-            await post.updateOne({ $pull: { likes: req.tokenData._id } });
-            res.status(403).json("post has been unliked ");
+            await post.updateOne({ $pull: { likes: req.tokenData.user_name } });
+            res.json("post has been unliked ");
         }
     }
     catch (err) {
