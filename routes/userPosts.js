@@ -3,6 +3,7 @@ const { UserPostModel, validateUserPosts } = require("../models/userPostModel");
 const router = express.Router();
 const { auth, authAdmin } = require("../auth/auth");
 const { UserModel } = require("../models/userModel");
+const mongoose = require('mongoose');
 
 // get all the post of the users you following 
 // Domain/userPosts
@@ -246,6 +247,8 @@ router.delete("/:id", auth, async (req, res) => {
     try {
         let id = req.params.id;
         let data;
+        id = mongoose.Types.ObjectId(id);
+
         if (req.tokenData.role == "admin") {
             data = await UserPostModel.deleteOne({ _id: id });
         }
