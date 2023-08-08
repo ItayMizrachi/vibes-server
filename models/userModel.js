@@ -53,8 +53,11 @@ exports.UserModel = mongoose.model("users", userSchema);
 
 exports.createToken = (user_id, role, user_followings, email, user_name) => {
     let token = jwt.sign({ _id: user_id, role: role, followings: user_followings, email: email, user_name: user_name }, config.tokenSecret, { expiresIn: "600mins" });
+
     return token;
 }
+
+
 
 exports.validateUser = (_reqBody) => {
     let joiSchema = Joi.object({

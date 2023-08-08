@@ -130,7 +130,7 @@ router.post("/", async (req, res) => {
   catch (err) {
     console.log(err);
     if (err.code == 11000) {
-      res.status(400).json({ msg: "email already exist", code: 11000 })
+      res.status(400).json({ msg: "email or user_name already exist", code: 11000 })
     }
 
   }
@@ -152,8 +152,9 @@ router.post("/login", async (req, res) => {
   if (!passValid) {
     return res.status(401).json({ msg: `problem with the password` });
   }
+
   let newToken = createToken(user._id, user.role, user.followings, user.email, user.user_name)
-  res.json({ token: newToken });
+  res.json({ token: newToken, expDate: Date.now() + 36000000 });
 
 })
 
