@@ -4,6 +4,7 @@ const userPostsR = require("./userPosts");
 const commentsR = require("./comments");
 const groupsR = require("./groups");
 const openaiR = require("./openai");
+const uploadR = require("./upload");
 // const chatbotmessagesR = require("./chatbotmessages");
 // const chatbotchatsR = require("./chatbotchats");
 
@@ -14,6 +15,7 @@ exports.routesInit = (app) => {
   app.use("/comments", commentsR);
   app.use("/groups", groupsR);
   app.use("/openai", openaiR);
+  app.use("/upload", uploadR);
   // app.use("/chatbotmessages", chatbotmessagesR);
   // app.use("/chatbotchats", chatbotchatsR);
 

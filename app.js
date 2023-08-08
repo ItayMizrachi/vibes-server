@@ -8,13 +8,14 @@ require("./db/mongoConnect")
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+//app.use(express.json());
+app.use(express.json({ limit: "5 mb" })); //omri 
 app.use(express.static(path.join(__dirname, "public")));
 
 routesInit(app);
 
 const server = http.createServer(app);
-let port = process.env.PORT || 3005;
+let port = process.env.PORT || 3001;
 server.listen(port);
 console.log("server listening on port " + port);
 
