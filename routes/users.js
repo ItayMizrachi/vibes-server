@@ -158,6 +158,8 @@ router.post("/login", async (req, res) => {
 
 })
 
+
+
 // Update user (you cant update password or email)
 // Domain/users/(id of the user you want to update)
 
