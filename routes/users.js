@@ -82,7 +82,7 @@ router.get("/OtherInfo/:id", authAdmin, async (req, res) => {
 
 //get all users(only admin)
 //Domain/users/userList
-router.get("/usersList", authAdmin, async (req, res) => {
+router.get("/usersList",authAdmin, async (req, res) => {
   try {
     let perPage = req.query.perPage || 5;
     let page = req.query.page - 1 || 0;
@@ -97,6 +97,19 @@ router.get("/usersList", authAdmin, async (req, res) => {
     res.status(502).json({ err })
   }
 })
+
+router.get("/usersNamesList", async (req, res) => {
+  try {
+      let data = await UserModel
+      .find({}, { _id:0, user_name:1 })
+      res.json(data)
+  }
+  catch (err) {
+    console.log(err);
+    res.status(502).json({ err })
+  }
+})
+
 
 router.get("/count", async (req, res) => {
   try {
