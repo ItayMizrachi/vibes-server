@@ -33,27 +33,48 @@ router.get("/", async (req, res) => {
 // get all the posts
 // Domain/userPosts/allposts
 
+// router.get("/allposts", async (req, res) => {
+//     let perPage = 10;
+//     let page = req.query.page - 1 || 0;
+//     let sort = req.query.sort || "date_created";
+//     let reverse = (req.query.reverse == "yes") ? 1 : -1;
+//     try {
+//         const allPosts = await UserPostModel.find({}).
+//             limit(perPage)
+//             .skip(page * perPage)
+//             .sort({ [sort]: reverse })
+//             .populate({ path: "user", select: ["user_name", "profilePic"] })
+//             // .populate("user")
+//             .exec()
+//             ;
+//         res.json(allPosts);
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(502).json({ err })
+//     }
+// })
+
 router.get("/allposts", async (req, res) => {
     let perPage = 10;
-    let page = req.query.page - 1 || 0;
+    let page = parseInt(req.query.page) || 1;  // Adjusted this line
     let sort = req.query.sort || "date_created";
     let reverse = (req.query.reverse == "yes") ? 1 : -1;
     try {
         const allPosts = await UserPostModel.find({}).
             limit(perPage)
-            .skip(page * perPage)
+            .skip((page - 1) * perPage)  // Adjusted this line
             .sort({ [sort]: reverse })
             .populate({ path: "user", select: ["user_name", "profilePic"] })
-            // .populate("user")
-            .exec()
-            ;
+            .exec();
         res.json(allPosts);
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err);
         res.status(502).json({ err })
     }
-})
+});
+
+  
 
 router.get("/postsList", authAdmin, async (req, res) => {
     let perPage = 10;
