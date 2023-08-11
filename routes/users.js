@@ -98,6 +98,8 @@ router.get("/usersList",authAdmin, async (req, res) => {
   }
 })
 
+//user_name list for search dropdown
+//TODO: pagination
 router.get("/usersNamesList", async (req, res) => {
   try {
       let data = await UserModel
