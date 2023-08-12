@@ -102,16 +102,14 @@ router.get("/usersList",authAdmin, async (req, res) => {
 //TODO: pagination
 router.get("/usersNamesList", async (req, res) => {
   try {
-      let data = await UserModel
-      .find({}, { _id:0, user_name:1 })
-      res.json(data)
+    let data = await UserModel.find({}, {_id:0,id:'$_id', user_name:1})
+    res.status(200).json(data)
   }
   catch (err) {
     console.log(err);
     res.status(502).json({ err })
   }
 })
-
 
 router.get("/count", async (req, res) => {
   try {
