@@ -216,9 +216,30 @@ router.put("/like/:id", auth, async (req, res) => {
         console.log(err);
         res.status(502).json({ err })
     }
-
-
 })
+
+
+// Saves a post
+// PUT /userPosts/save/:id
+router.put('/save/:id', auth, async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const user = await UserModel.findById(req.tokenData._id);
+
+        if (!user.saved_posts.includes(postId)) {
+            await user.updateOne({ $push: { saved_posts: postId } });
+            res.json('Post has been saved');
+        } else {
+            await user.updateOne({ $pull: { saved_posts: postId } });
+            res.json('Post has been unsaved');
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(502).json({ error: err.message });
+    }
+});
+
+
 // Update a post
 // Domain/userPosts/(id of the post)
 router.put("/:id", auth, async (req, res) => {
