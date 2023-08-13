@@ -82,9 +82,9 @@ router.get("/OtherInfo/:id", authAdmin, async (req, res) => {
 
 //get all users(only admin)
 //Domain/users/userList
-router.get("/usersList",authAdmin, async (req, res) => {
+router.get("/usersList", authAdmin, async (req, res) => {
   try {
-    let perPage = req.query.perPage || 5;
+    let perPage = req.query.perPage || 8;
     let page = req.query.page - 1 || 0;
     let data = await UserModel
       .find({}, { password: 0 })
@@ -98,11 +98,25 @@ router.get("/usersList",authAdmin, async (req, res) => {
   }
 })
 
+router.get("/random5", async (req, res) => {
+  try {
+    let data = await UserModel.aggregate([
+      { $sample: { size: 5 } }
+    ]);
+
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+    res.status(502).json({ err });
+  }
+});
+
+
 //user_name list for search dropdown
 //TODO: pagination
 router.get("/usersNamesList", async (req, res) => {
   try {
-    let data = await UserModel.find({}, {_id:0,id:'$_id', user_name:1})
+    let data = await UserModel.find({}, { _id: 0, id: '$_id', user_name: 1 })
     res.status(200).json(data)
   }
   catch (err) {
@@ -113,7 +127,7 @@ router.get("/usersNamesList", async (req, res) => {
 
 router.get("/count", async (req, res) => {
   try {
-    let perPage = req.query.perPage || 5;
+    let perPage = req.query.perPage || 8;
     const count = await UserModel.countDocuments({});
     res.json({ count, pages: Math.ceil(count / perPage) });
   }

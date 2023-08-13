@@ -43,6 +43,18 @@ router.get("/groupsListUser", auth, async (req, res) => {
         res.status(502).json({ err })
     }
 })
+router.get("/count", async (req, res) => {
+    try {
+        let perPage = req.query.perPage || 8;
+        const count = await GroupModel.countDocuments({});
+        res.json({ count, pages: Math.ceil(count / perPage) });
+    }
+    catch (err) {
+        console.log("im an error");
+        console.log(err);
+        res.status(502).json({ err })
+    }
+})
 
 
 router.post("/", auth, async (req, res) => {
@@ -53,7 +65,7 @@ router.post("/", auth, async (req, res) => {
     }
     try {
         let group = new GroupModel(req.body);
-        group.group_admin = req.tokenData._id;
+        group.group_admin = req.tokenData.user_name;
         await group.save();
         res.status(201).json(group);
 

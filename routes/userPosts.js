@@ -74,10 +74,10 @@ router.get("/allposts", async (req, res) => {
     }
 });
 
-  
+
 
 router.get("/postsList", authAdmin, async (req, res) => {
-    let perPage = 10;
+    let perPage = 15;
     let page = req.query.page - 1 || 0;
     let sort = req.query.sort || "date_created";
     let reverse = req.query.reverse === "yes" ? 1 : -1;
@@ -86,6 +86,7 @@ router.get("/postsList", authAdmin, async (req, res) => {
             .limit(perPage)
             .skip(page * perPage)
             .sort({ [sort]: reverse })
+            .populate({ path: "user", select: ["user_name", "name"] })
             ;
 
         res.json(allPosts);
@@ -160,7 +161,7 @@ router.get("/single/:id", async (req, res) => {
 
 router.get("/count", async (req, res) => {
     try {
-        let perPage = req.query.perPage || 5;
+        let perPage = req.query.perPage || 15;
         const count = await UserPostModel.countDocuments({});
         res.json({ count, pages: Math.ceil(count / perPage) });
     }
