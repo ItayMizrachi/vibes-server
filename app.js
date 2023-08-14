@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, "public")));
 routesInit(app);
 
 const server = http.createServer(app);
-let port = process.env.PORT || 3008;
+let port = process.env.PORT || 3009;
 server.listen(port);
 console.log("server listening on port " + port);
 

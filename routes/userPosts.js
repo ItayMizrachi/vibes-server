@@ -87,6 +87,8 @@ router.get("/postsList", authAdmin, async (req, res) => {
             .limit(perPage)
             .skip(page * perPage)
             .sort({ [sort]: reverse })
+            .populate({ path: "user", select: ["user_name", "name"] })
+            .exec();
             ;
 
         res.json(allPosts);
