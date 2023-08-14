@@ -100,7 +100,9 @@ router.get("/usersList", authAdmin, async (req, res) => {
 
 router.get("/random5", auth, async (req, res) => {
   try {
+    let id = req.tokenData._id;
     let data = await UserModel.aggregate([
+      { $match: { _id: { $nin: [id, ...req.tokenData.followings] } } }, // Exclude current user and followings
       { $sample: { size: 5 } }
     ]);
 

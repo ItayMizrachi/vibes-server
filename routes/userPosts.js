@@ -172,6 +172,8 @@ router.get("/count", async (req, res) => {
     }
 })
 
+
+
 //Post a new post 
 // Domain/userPosts
 router.post("/", auth, async (req, res) => {
@@ -210,7 +212,7 @@ router.put("/like/:id", auth, async (req, res) => {
 
         } else {
             await post.updateOne({ $pull: { likes: req.tokenData.user_name } });
-            res.json("post has been unliked ");
+            res.json("post has been unLiked ");
         }
     }
     catch (err) {
