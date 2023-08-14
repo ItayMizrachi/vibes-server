@@ -98,7 +98,7 @@ router.get("/usersList", authAdmin, async (req, res) => {
   }
 })
 
-router.get("/random5", async (req, res) => {
+router.get("/random5", auth, async (req, res) => {
   try {
     let data = await UserModel.aggregate([
       { $sample: { size: 5 } }
