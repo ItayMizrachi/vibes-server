@@ -9,7 +9,7 @@ const notificationsSchema = new mongoose.Schema({
   },
   sender: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user",
+    ref: "users",
 },
   eventType: {
     type: String,

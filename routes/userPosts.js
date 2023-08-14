@@ -4,6 +4,7 @@ const router = express.Router();
 const { auth, authAdmin } = require("../auth/auth");
 const { UserModel } = require("../models/userModel");
 const mongoose = require('mongoose');
+const Notifications = require("../models/notificationsModel");
 
 // get all the post of the users you following 
 // Domain/userPosts
@@ -74,7 +75,7 @@ router.get("/allposts", async (req, res) => {
     }
 });
 
-  
+
 
 router.get("/postsList", authAdmin, async (req, res) => {
     let perPage = 10;
@@ -145,11 +146,15 @@ router.get("/search", auth, async (req, res) => {
         res.status(502).json({ err })
     }
 })
+
 // get a single post by its id
 // Domain/userPosts/single/(id of the post)
 router.get("/single/:id", async (req, res) => {
     try {
-        let data = await UserPostModel.findById(req.params.id);
+        let id = req.params.id;
+        id = mongoose.Types.ObjectId(id);
+        let data = await UserPostModel.findById(id).populate({ path: "user", select: ["user_name", "profilePic"] })
+            .exec();;
         res.json(data);
     }
     catch (err) {
@@ -158,6 +163,21 @@ router.get("/single/:id", async (req, res) => {
     }
 })
 
+
+// // get a single post by its id
+// // Domain/userPosts/single/(id of the post)
+// router.get("/single/:id", async (req, res) => {
+//     try {
+
+//         let id = (req.params.id);
+//         let data = await UserPostModel.findById(id);
+//         res.json(data);
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(502).json({ err })
+//     }
+// })
 router.get("/count", async (req, res) => {
     try {
         let perPage = req.query.perPage || 5;
@@ -196,8 +216,8 @@ router.post("/", auth, async (req, res) => {
 })
 
 
-//like a post
-//userPosts/like/(id of the post)
+// //like a post
+// //userPosts/like/(id of the post)
 router.put("/like/:id", auth, async (req, res) => {
     try {
         let id = req.params.id;
@@ -217,6 +237,7 @@ router.put("/like/:id", auth, async (req, res) => {
         res.status(502).json({ err })
     }
 })
+
 
 
 // Saves a post
