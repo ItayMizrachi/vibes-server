@@ -50,6 +50,20 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
+router.get("/unread-count/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find and count all notifications with isRead set to false for the specified user
+    const unreadCount = await Notifications.countDocuments({ userId, isRead: false });
+
+    res.status(200).json({ unreadCount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
 router.post("/like", async (req, res) => {
 // Create a new like notification
   try {
@@ -114,6 +128,21 @@ router.post("/follow", async (req, res) => {
   }
 });
 
+router.put("/mark-as-read/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Update all notifications for the specified user to set isRead to true
+    await Notifications.updateMany({ userId }, { isRead: true });
+
+    res.status(200).json({ message: "Notifications marked as read" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
+
 
 // Delete a follow notification
 router.delete("/follow/:reciever/:sender", async (req, res) => {
@@ -154,17 +183,15 @@ router.delete("/unlike/:sender/:postId", async (req, res) => {
 });
 
 // Delete a comment notification 
-router.delete("/uncomment/:sender/:postId", async (req, res) => {
+router.delete("/uncomment/:commentId", async (req, res) => {
   try {
-    const postId = req.params.postId;
-    const sender = req.params.sender;
+    const commentId = req.params.commentId;
     const eventType = "comment";
 
     // Check if the like notification exists for the specified post and user
     await Notifications.deleteOne({
-      sender,
       eventType,
-      postId,
+      commentId,
        // Assuming sender field stores the user_name
     });
       res.status(200).json({ message: "Comment notification deleted successfully" });

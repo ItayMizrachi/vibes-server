@@ -46,6 +46,7 @@ router.get("/random5", auth, async (req, res) => {
   }
 });
 
+
 // Get user info 
 // Domain/users/userInfo/user_name
 
