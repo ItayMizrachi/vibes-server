@@ -89,7 +89,7 @@ router.get("/postsList", authAdmin, async (req, res) => {
             .sort({ [sort]: reverse })
             .populate({ path: "user", select: ["user_name", "name"] })
             .exec();
-            ;
+        ;
 
         res.json(allPosts);
     } catch (err) {
@@ -155,8 +155,9 @@ router.get("/single/:id", async (req, res) => {
     try {
         let id = req.params.id;
         id = mongoose.Types.ObjectId(id);
-        let data = await UserPostModel.findById(id).populate({ path: "user", select: ["user_name", "profilePic"] })
-            .exec();;
+        let data = await UserPostModel.findById(id)
+            .populate({ path: "user", select: ["user_name", "profilePic"] })
+            .exec();
         res.json(data);
     }
     catch (err) {
