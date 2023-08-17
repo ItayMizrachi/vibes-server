@@ -41,6 +41,7 @@ router.get("/:userId", async (req, res) => {
       .limit(ITEMS_PER_PAGE)
       .populate({ path: "sender", select: ["user_name", "profilePic", "followers"] }, )
       .populate({ path: "postId", select: ["img_url"] })
+      .populate({ path: "commentId", select: ["text"] })
       .exec()
     res.json(notifications);
   } catch (err) {
@@ -72,12 +73,12 @@ router.post("/like", async (req, res) => {
 // Create a new comment notification
 router.post("/comment", async (req, res) => {
   try {
-    const { userId, postId, senderId } = req.body;
+    const { userId, postId, senderId, commentId } = req.body;
     const eventType = "comment";
     
     // Check if senderId is different from userId before saving the notification
     if (userId.toString() !== senderId.toString()) {
-      const notification = new Notifications({ userId, eventType, postId, sender: senderId });
+      const notification = new Notifications({ userId, eventType, postId, sender: senderId, commentId });
       await notification.save();
       res.status(201).json(notification);
     } else {

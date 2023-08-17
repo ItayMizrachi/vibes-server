@@ -82,7 +82,7 @@ router.delete("/:id", auth, async (req, res) => {
             data = await CommentModel.deleteOne({ _id: id });
         }
         else {
-            data = await CommentModel.deleteOne({ _id: id, user_id: req.tokenData._id });
+            data = await CommentModel.deleteOne({ _id: id, user: req.tokenData._id });
         }
         res.json(data);
     }

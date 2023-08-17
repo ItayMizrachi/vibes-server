@@ -10,7 +10,7 @@ const notificationsSchema = new mongoose.Schema({
   sender: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
-},
+  },
   eventType: {
     type: String,
     enum: ["comment", "like", "follow"], // Possible event types
@@ -19,6 +19,10 @@ const notificationsSchema = new mongoose.Schema({
   postId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "userPosts", // Reference to the Post model (for comments and likes)
+  },
+  commentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "comments", // Reference to the comments model 
   },
   date_created: {
     type: Date,
