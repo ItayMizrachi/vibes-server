@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
 });
 
 
-const ITEMS_PER_PAGE = 15;
+const ITEMS_PER_PAGE = 40;
 
 router.get("/:userId", async (req, res) => {
   try {
