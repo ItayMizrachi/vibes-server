@@ -49,14 +49,14 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-// Create a new like notification
 router.post("/like", async (req, res) => {
+// Create a new like notification
   try {
     const { userId, postId, senderId } = req.body;
     const eventType = "like";
     
     // Check if senderId is different from userId before saving the notification
-    if (userId.toString() !== senderId.toString()) {
+    if (userId != senderId) {
       const notification = new Notifications({ userId, eventType, postId, sender: senderId });
       await notification.save();
       res.status(201).json(notification);
@@ -113,15 +113,16 @@ router.post("/follow", async (req, res) => {
   }
 });
 
+
 // Delete a follow notification
-router.delete("/follow/:relatedId", async (req, res) => {
+router.delete("/follow/:reciever/:sender", async (req, res) => {
   try {
-    const { relatedId } = req.params;
-    const userId = req.tokenData._id;
+    const receiver = req.params.reciever;
+    const sender = req.params.sender;
     const eventType = "follow";
 
     // Delete the follow notification with the specified related ID
-    await Notifications.deleteOne({ userId, eventType, relatedId });
+    await Notifications.deleteOne({ userId:receiver, eventType, sender });
 
     res.status(200).json({ message: "Follow notification deleted successfully" });
   } catch (err) {
@@ -130,20 +131,78 @@ router.delete("/follow/:relatedId", async (req, res) => {
   }
 });
 
-
-router.delete("/:eventType/:relatedId", async (req, res) => {
+// Delete a like notification when a user unlikes a post
+router.delete("/unlike/:sender/:postId", async (req, res) => {
   try {
-    const { eventType, relatedId } = req.params;
-    const userId = req.tokenData._id;
-    
-    // Delete the notification with the specified event type and related ID
-    await Notifications.deleteOne({ userId, eventType, relatedId });
+    const postId = req.params.postId;
+    const sender = req.params.sender;
+    const eventType = "like";
 
-    res.status(200).json({ message: "Notification deleted successfully" });
-  } catch (err) {
+    // Check if the like notification exists for the specified post and user
+    await Notifications.deleteOne({
+      sender,
+      eventType,
+      postId,
+       // Assuming sender field stores the user_name
+    });
+      res.status(200).json({ message: "Like notification deleted successfully" });
+     } catch (err) {
     console.error(err);
     res.status(500).json({ error: "An error occurred" });
   }
 });
+
+// Delete a comment notification 
+router.delete("/uncomment/:sender/:postId", async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const sender = req.params.sender;
+    const eventType = "comment";
+
+    // Check if the like notification exists for the specified post and user
+    await Notifications.deleteOne({
+      sender,
+      eventType,
+      postId,
+       // Assuming sender field stores the user_name
+    });
+      res.status(200).json({ message: "Comment notification deleted successfully" });
+     } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
+// Delete a post notification when a user deletes a post
+router.delete("/post/:postId", async (req, res) => {
+  try {
+    const postId = req.params.postId;
+ 
+    await Notifications.deleteMany({
+        postId
+    });
+      res.status(200).json({ message: "post notifications deleted successfully" });
+     } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
+
+
+// router.delete("/:eventType/:relatedId", async (req, res) => {
+//   try {
+//     const { eventType, relatedId } = req.params;
+//     const userId = req.tokenData._id;
+    
+//     // Delete the notification with the specified event type and related ID
+//     await Notifications.deleteOne({ userId, eventType, relatedId });
+
+//     res.status(200).json({ message: "Notification deleted successfully" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "An error occurred" });
+//   }
+// });
 
 module.exports = router;
