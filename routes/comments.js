@@ -74,13 +74,36 @@ router.put("/:id", auth, async (req, res) => {
 
 //delete comment
 // Domain/comments/(id of the coment)
-router.delete("/:id", auth, async (req, res) => {
+// router.delete("/:id", auth, async (req, res) => {
+//     try {
+//         let id = req.params.id;
+//         let data;
+//         if (req.tokenData.role == "admin") {
+//             data = await CommentModel.deleteOne({ _id: id });
+//         }
+//         else {
+//             data = await CommentModel.deleteOne({ _id: id, user: req.tokenData._id });
+//         }
+//         res.json(data);
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(502).json({ err })
+//     }
+// })
+
+//delete comment
+// Domain/comments/(id of the coment)
+router.delete("/:id/:user", auth, async (req, res) => {
     try {
         let id = req.params.id;
+        let user_id = req.params.user;
         let data;
         if (req.tokenData.role == "admin") {
             data = await CommentModel.deleteOne({ _id: id });
-        }
+        } else if (user_id == req.tokenData._id){
+            data = await CommentModel.deleteOne({ _id: id });
+        } 
         else {
             data = await CommentModel.deleteOne({ _id: id, user: req.tokenData._id });
         }
@@ -91,6 +114,7 @@ router.delete("/:id", auth, async (req, res) => {
         res.status(502).json({ err })
     }
 })
+
 
 
 
