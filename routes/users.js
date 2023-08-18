@@ -187,8 +187,6 @@ router.post("/login", async (req, res) => {
 
 })
 
-
-
 // Update user (you cant update password or email)
 // Domain/users/(id of the user you want to update)
 
@@ -256,26 +254,6 @@ router.put("/changePass/:id", auth, async (req, res) => {
 })
 
 
-// Delete
-// Domain/users/(id of the user)
-router.delete("/:id", auth, async (req, res) => {
-  let id = req.params.id;
-  let data;
-  try {
-    if (req.tokenData.role == "admin" && id != "643aeef089f3063e797886ae") {
-      data = await UserModel.deleteOne({ _id: id });
-    }
-    else if (id == req.tokenData._id) {
-      data = await UserModel.deleteOne({ _id: id });
-    }
-    res.json(data);
-  }
-  catch (err) {
-    console.log(err);
-    res.status(502).json({ err })
-  }
-
-})
 
 //follow other user
 //Domain/users/follow/(id of the user you want to follow)
@@ -329,6 +307,27 @@ router.put("/unfollow/:id", auth, async (req, res) => {
   }
 })
 
+router.put("/savePost/:id", auth, async (req, res) => {
+  try {
+    let id = req.params.id;
+    const user = await UserModel.findById(req.tokenData._id);
+
+    if (!user.saved_posts.includes(id)) {
+      await user.updateOne({ $push: { saved_posts: id } });
+      res.json("post has been saved ")
+
+    } else {
+      await user.updateOne({ $pull: { saved_posts: id } });
+      res.status(403).json("post has been unsaved ");
+    }
+  }
+  catch (err) {
+    console.log(err);
+    res.status(502).json({ err })
+  }
+})
+
+
 //change user role
 //Domain/users/changeRole/(id of the user)/admin\user
 router.patch("/changeRole/:id/:role", authAdmin, async (req, res) => {
@@ -348,27 +347,6 @@ router.patch("/changeRole/:id/:role", authAdmin, async (req, res) => {
 })
 
 
-router.put("/savePost/:id", auth, async (req, res) => {
-  try {
-    let id = req.params.id;
-    const user = await UserModel.findById(req.tokenData._id);
-
-    if (!user.saved_posts.includes(id)) {
-      await user.updateOne({ $push: { saved_posts: id } });
-      res.json("post has been saved ")
-
-    } else {
-      await user.updateOne({ $pull: { saved_posts: id } });
-      res.status(403).json("post has been unsaved ");
-    }
-  }
-  catch (err) {
-    console.log(err);
-    res.status(502).json({ err })
-  }
-
-
-})
 
 router.patch("/profilePic", auth, async (req, res) => {
   try {
@@ -384,6 +362,28 @@ router.patch("/profilePic", auth, async (req, res) => {
     console.log(err);
     res.status(502).json({ err })
   }
+})
+
+
+// Delete
+// Domain/users/(id of the user)
+router.delete("/:id", auth, async (req, res) => {
+  let id = req.params.id;
+  let data;
+  try {
+    if (req.tokenData.role == "admin" && id != "643aeef089f3063e797886ae") {
+      data = await UserModel.deleteOne({ _id: id });
+    }
+    else if (id == req.tokenData._id) {
+      data = await UserModel.deleteOne({ _id: id });
+    }
+    res.json(data);
+  }
+  catch (err) {
+    console.log(err);
+    res.status(502).json({ err })
+  }
+
 })
 
 

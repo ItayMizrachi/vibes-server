@@ -31,31 +31,6 @@ router.get("/", async (req, res) => {
     }
 })
 
-// get all the posts
-// Domain/userPosts/allposts
-
-// router.get("/allposts", async (req, res) => {
-//     let perPage = 10;
-//     let page = req.query.page - 1 || 0;
-//     let sort = req.query.sort || "date_created";
-//     let reverse = (req.query.reverse == "yes") ? 1 : -1;
-//     try {
-//         const allPosts = await UserPostModel.find({}).
-//             limit(perPage)
-//             .skip(page * perPage)
-//             .sort({ [sort]: reverse })
-//             .populate({ path: "user", select: ["user_name", "profilePic"] })
-//             // .populate("user")
-//             .exec()
-//             ;
-//         res.json(allPosts);
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(502).json({ err })
-//     }
-// })
-
 router.get("/allposts", async (req, res) => {
     let perPage = 10;
     let page = parseInt(req.query.page) || 1;  // Adjusted this line
@@ -74,8 +49,6 @@ router.get("/allposts", async (req, res) => {
         res.status(502).json({ err })
     }
 });
-
-
 
 router.get("/postsList", authAdmin, async (req, res) => {
     let perPage = 10;
@@ -278,7 +251,7 @@ router.put("/:id", auth, async (req, res) => {
             data = await UserPostModel.updateOne({ _id: id }, req.body);
         }
         else {
-            data = await UserPostModel.updateOne({ _id: id, user_id: req.tokenData._id }, req.body);
+            data = await UserPostModel.updateOne({ _id: id, user: req.tokenData._id }, req.body);
         }
         res.json(data);
     }
