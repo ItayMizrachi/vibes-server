@@ -279,7 +279,7 @@ router.put("/:id", auth, async (req, res) => {
             data = await UserPostModel.updateOne({ _id: id }, req.body);
         }
         else {
-            data = await UserPostModel.updateOne({ _id: id, user_id: req.tokenData._id }, req.body);
+            data = await UserPostModel.updateOne({ _id: id, user: req.tokenData._id }, req.body);
         }
         res.json(data);
     }
